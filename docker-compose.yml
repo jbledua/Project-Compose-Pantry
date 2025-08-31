@@ -9,17 +9,14 @@ services:
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - pantry-state:/var/lib/tailscale
+      - pantry-ts-state:/var/lib/tailscale
     devices:
       - /dev/net/tun:/dev/net/tun
-    cap_add: 
+    cap_add:
       - net_admin
     restart: unless-stopped
     ports:
-      # Expose Web (frontend) to host
-      - "${HOST_FRONTEND_PORT:-9926}:${MEALIE_FRONTEND_PORT:-3000}"
-      # Expose API to host (comment out next line to keep API private via Tailscale only)
-      #- "${HOST_API_PORT:-0}:${MEALIE_API_PORT:-9000}"
+      - "${PUBLIC_PORT:-9926}:9000"
 
   pantry-app:
     image: ghcr.io/mealie-recipes/mealie:latest
@@ -30,16 +27,12 @@ services:
     volumes:
       - pantry-data:/app/data
     environment:
-      # Mealie base settings
       - BASE_URL=${BASE_URL}
       - TZ=${TIMEZONE:-UTC}
       - ALLOW_SIGNUP=${ALLOW_SIGNUP:-true}
-      # Internal bindings (inside the Tailscale network namespace)
-      - FRONTEND_PORT=${MEALIE_FRONTEND_PORT:-3000}
-      - API_PORT=${MEALIE_API_PORT:-9000}
 
 volumes:
-  pantry-state:
+  pantry-ts-state:
     name: ${STACK_NAME}-state
     driver: local
   pantry-data:
