@@ -24,7 +24,7 @@ services:
   pantry-app:
     image: ghcr.io/mealie-recipes/mealie:latest
     container_name: ${STACK_NAME}-app
-    network_mode: service:$pantry-ts
+    network_mode: service:pantry-ts
     depends_on:
       - pantry-ts
     volumes:
