@@ -12,7 +12,8 @@ services:
       - pantry-state:/var/lib/tailscale
     devices:
       - /dev/net/tun:/dev/net/tun
-    cap_add: [net_admin]
+    cap_add: 
+      - net_admin
     restart: unless-stopped
     ports:
       # Expose Web (frontend) to host
@@ -24,7 +25,8 @@ services:
     image: ghcr.io/mealie-recipes/mealie:latest
     container_name: ${STACK_NAME}-app
     network_mode: service:${STACK_NAME}-ts
-    depends_on: [pantry-ts]
+    depends_on:
+      - pantry-ts
     volumes:
       - pantry-data:/app/data
     environment:
