@@ -9,7 +9,7 @@ services:
       - TS_EXTRA_ARGS=--advertise-tags=tag:container
       - TS_STATE_DIR=/var/lib/tailscale
     volumes:
-      - ${STACK_NAME}-state:/var/lib/tailscale
+      - pantry-ts-state:/var/lib/tailscale
     devices:
       - /dev/net/tun:/dev/net/tun
     cap_add:
@@ -25,14 +25,14 @@ services:
     depends_on:
       - pantry-ts
     volumes:
-      - ${STACK_NAME}-data:/app/data
+      - pantry-data:/app/data
     environment:
       - BASE_URL=${BASE_URL}
       - TZ=${TIMEZONE:-UTC}
       - ALLOW_SIGNUP=${ALLOW_SIGNUP:-true}
 
 volumes:
-  pantry-state:
+  pantry-ts-state:
     name: ${STACK_NAME}-state
     driver: local
   pantry-data:
