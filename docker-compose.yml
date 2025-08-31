@@ -1,0 +1,40 @@
+---
+services:
+  pantry-ts:
+    image: tailscale/tailscale:latest
+    container_name: ${STACK_NAME}-ts
+    hostname: ${TS_HOSTNAME}
+    environment:
+      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_EXTRA_ARGS=--advertise-tags=tag:container
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - ${STACK_NAME}-state:/var/lib/tailscale
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    restart: unless-stopped
+    ports:
+      - "${PUBLIC_PORT:-9926}:9000"
+
+  pantry-app:
+    image: ghcr.io/mealie-recipes/mealie:latest
+    container_name: ${STACK_NAME}-app
+    network_mode: service:${STACK_NAME}-ts
+    depends_on:
+      - pantry-ts
+    volumes:
+      - ${STACK_NAME}-data:/app/data
+    environment:
+      - BASE_URL=${BASE_URL}
+      - TZ=${TIMEZONE:-UTC}
+      - ALLOW_SIGNUP=${ALLOW_SIGNUP:-true}
+
+volumes:
+  pantry-state:
+    name: ${STACK_NAME}-state
+    driver: local
+  pantry-data:
+    name: ${STACK_NAME}-data
+    driver: local

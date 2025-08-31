@@ -1,0 +1,12 @@
+# Ignore environment variable files
+.env
+*.env
+!.env.example
+
+# Ignore editor/OS specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Docker-related artifacts
+*.pid
+*.log
